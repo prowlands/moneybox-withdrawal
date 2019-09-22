@@ -4,7 +4,7 @@ namespace Moneybox.App
 {
     public class Account
     {
-        public const decimal PayInLimit = 4000m;
+        private const decimal PayInLimit = 4000m;
 
         private const decimal PayInLimitThreshold = 500m;
 
@@ -14,11 +14,11 @@ namespace Moneybox.App
 
         public User User { get; set; }
 
-        public decimal Balance { get; set; }
+        private decimal Balance { get; set; }
 
-        public decimal Withdrawn { get; set; }
+        private decimal Withdrawn { get; set; }
 
-        public decimal PaidIn { get; set; }
+        private decimal PaidIn { get; set; }
 
         public bool HasSufficientBalance(decimal withdrawalAmount)
         {
@@ -50,6 +50,21 @@ namespace Moneybox.App
         {
             Balance = Balance + amount;
             PaidIn = PaidIn + amount;
+        }
+
+        public decimal GetBalance()
+        {
+            return Balance;
+        }
+
+        public decimal GetWithdrawn()
+        {
+            return Withdrawn;
+        }
+
+        public decimal GetPaidIn()
+        {
+            return PaidIn;
         }
     }
 }

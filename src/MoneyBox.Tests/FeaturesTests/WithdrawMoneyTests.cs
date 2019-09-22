@@ -32,16 +32,14 @@ namespace MoneyBox.Tests.FeaturesTests
             var accountId = Guid.NewGuid();
             var userAcount = new Account
             {
-                Id = accountId,
-                Balance = 1000,
+                Id = accountId
             };
+            userAcount.DepositFunds(500);
             _mockAccountRepository.Setup(x => x.GetAccountById(It.IsAny<Guid>())).Returns(userAcount);
             //ACT
             withdrawMoney.Execute(accountId, withdrawalAmount);
 
             //ASSERT
-            userAcount.Balance.ShouldBe(950);
-            _mockAccountRepository.Verify(x => x.GetAccountById(It.IsAny<Guid>()), Times.Once);
             _mockAccountRepository.Verify(x => x.Update(It.IsAny<Account>()), Times.Once);
         }
 
@@ -53,16 +51,14 @@ namespace MoneyBox.Tests.FeaturesTests
             var accountId = Guid.NewGuid();
             var userAcount = new Account
             {
-                Id = accountId,
-                Balance = 25,
+                Id = accountId
             };
+            userAcount.DepositFunds(25);
             _mockAccountRepository.Setup(x => x.GetAccountById(It.IsAny<Guid>())).Returns(userAcount);
             //ACT            
             Assert.Throws<InvalidOperationException>(() => withdrawMoney.Execute(accountId, withdrawalAmount));
 
             //ASSERT
-            userAcount.Balance.ShouldBe(25);
-            _mockAccountRepository.Verify(x => x.GetAccountById(It.IsAny<Guid>()), Times.Once);
             _mockAccountRepository.Verify(x => x.Update(It.IsAny<Account>()), Times.Never);
         }
 
@@ -75,12 +71,12 @@ namespace MoneyBox.Tests.FeaturesTests
             var userAcount = new Account
             {
                 Id = accountId,
-                Balance = 450,
                 User = new User
                 {
                     Email = "test@email.com"
                 }
             };
+            userAcount.DepositFunds(450);
             _mockAccountRepository.Setup(x => x.GetAccountById(It.IsAny<Guid>())).Returns(userAcount);
             //ACT
             withdrawMoney.Execute(accountId, withdrawalAmount);

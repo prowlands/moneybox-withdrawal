@@ -19,74 +19,94 @@ namespace MoneyBox.Tests.Domain
         public void HasSufficientBalanceShouldReturnCorrectStatus(decimal balance, decimal withdrawalAmount, bool expectedResult)
         {
             //ARRANGE
-            var account = new Account
-            {
-                Balance = balance
-            };
+            var account = new Account();
+            account.DepositFunds(balance);
             //ACT
             bool result = account.HasSufficientBalance(withdrawalAmount);
 
             //ASSERT
-            expectedResult.ShouldBe(expectedResult);
+            result.ShouldBe(expectedResult);
         }
 
         [Test]
-        [TestCase(600, true)]
-        [TestCase(100, false)]
+        [TestCase(600, false)]
+        [TestCase(100, true)]
         public void HasLowFundsShouldReturnCorrectStatus(decimal balance, bool expectedResult)
         {
             //ARRANGE
-            var account = new Account
-            {
-                Balance = balance
-            };
+            var account = new Account();
+            account.DepositFunds(balance);
             //ACT
             bool result = account.HasLowFunds();
 
             //ASSERT
-            expectedResult.ShouldBe(expectedResult);
+            result.ShouldBe(expectedResult);
         }
 
         [Test]
-        [TestCase(150, 0, 20, 130, -20)]
-        [TestCase(150, 50, 20, 130, 30)]
-        [TestCase(0, 0, 20, -20, -20)]
-        [TestCase(0, 50, 20, -20, 30)]
-        public void WithdrawFundsShouldUpdateCorrectly(decimal startingBalance, decimal startingWithdrawn, decimal withdrawalAmount, decimal expectedBalance, decimal expectedWithdrawn)
+        [TestCase(100, 10, true)]
+        [TestCase(100, 25, true)]
+        [TestCase(4000, 100, false)]
+        [TestCase(3800, 250, false)]
+        public void HasSufficientPayInCapacityShouldReturnCorrectStatus(decimal paidInAmount, decimal depositAmount, bool expectedResult)
         {
             //ARRANGE
-            var account = new Account
-            {
-                Balance = startingBalance,
-                Withdrawn = startingWithdrawn
-            };
+            var account = new Account();
+            account.DepositFunds(paidInAmount);           
+            
+            //ACT
+            bool result = account.HasSufficientPayInCapacity(depositAmount);
+
+            //ASSERT
+            result.ShouldBe(expectedResult);
+        }
+
+        [Test]
+        [TestCase(100, 10, false)]
+        [TestCase(100, 25, false)]
+        [TestCase(3550, 100, true)]
+        [TestCase(3400, 250, true)]
+        public void IsNearPayInLimitShouldReturnCorrectStatus(decimal paidInAmount, decimal depositAmount, bool expectedResult)
+        {
+            //ARRANGE
+            var account = new Account();
+            account.DepositFunds(paidInAmount);
+            //ACT
+            bool result = account.IsNearPayInLimit(depositAmount);
+
+            //ASSERT
+            result.ShouldBe(expectedResult);
+        }
+
+        [Test]
+        [TestCase(150, 20, 130, -20)]
+        [TestCase(0, 20, -20, -20)]
+        public void WithdrawFundsShouldUpdateCorrectly(decimal startingBalance, decimal withdrawalAmount, decimal expectedBalance, decimal expectedWithdrawn)
+        {
+            //ARRANGE
+            var account = new Account();
+            account.DepositFunds(startingBalance);
             //ACT
             account.WithdrawFunds(withdrawalAmount);
 
             //ASSERT
-            account.Balance.ShouldBe(expectedBalance);
-            account.Withdrawn.ShouldBe(expectedWithdrawn);
+            account.GetBalance().ShouldBe(expectedBalance);
+            account.GetWithdrawn().ShouldBe(expectedWithdrawn);
         }
 
         [Test]
-        [TestCase(150, 0, 20, 170, 20)]
-        [TestCase(150, 50, 20, 170, 70)]
-        [TestCase(0, 0, 20, 20, 20)]
-        [TestCase(0, 50, 20, 20, 70)]
-        public void DepositFundsShouldUpdateCorrectly(decimal startingBalance, decimal startingPaidIn, decimal depositAmount, decimal expectedBalance, decimal expectedPaidIn)
+        [TestCase(150, 150, 150)]
+        [TestCase(20, 20, 20)]
+        public void DepositFundsShouldUpdateCorrectly(decimal depositAmount, decimal expectedBalance, decimal expectedPaidIn)
         {
             //ARRANGE
-            var account = new Account
-            {
-                Balance = startingBalance,
-                PaidIn = startingPaidIn
-            };
+            var account = new Account();
             //ACT
             account.DepositFunds(depositAmount);
 
             //ASSERT
-            account.Balance.ShouldBe(expectedBalance);
-            account.PaidIn.ShouldBe(expectedPaidIn);
+            account.GetBalance().ShouldBe(expectedBalance);
+            account.GetPaidIn().ShouldBe(expectedPaidIn);
         }
     }
 }

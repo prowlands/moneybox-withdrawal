@@ -32,15 +32,12 @@ namespace MoneyBox.Tests.FeaturesTests
             var fromUserAccount = new Account
             {
                 Id = fromAccountId,
-                Balance = 1000,
             };
-
+            fromUserAccount.DepositFunds(1000);
             var toAccountId = Guid.NewGuid();
             var toUserAccount = new Account
             {
-                Id = toAccountId,
-                Balance = 1000,
-                PaidIn = 0
+                Id = toAccountId
             };
             _mockAccountRepository.Setup(x => x.GetAccountById(fromAccountId)).Returns(fromUserAccount);
             _mockAccountRepository.Setup(x => x.GetAccountById(toAccountId)).Returns(toUserAccount);
@@ -48,9 +45,6 @@ namespace MoneyBox.Tests.FeaturesTests
             transferMoney.Execute(fromAccountId, toAccountId, transferAmount);
 
             //ASSERT
-            fromUserAccount.Balance.ShouldBe(950);
-            toUserAccount.Balance.ShouldBe(1050);
-            _mockAccountRepository.Verify(x => x.GetAccountById(It.IsAny<Guid>()), Times.Exactly(2));
             _mockAccountRepository.Verify(x => x.Update(It.IsAny<Account>()), Times.Exactly(2));
         }
 
@@ -63,15 +57,12 @@ namespace MoneyBox.Tests.FeaturesTests
             var fromUserAccount = new Account
             {
                 Id = fromAccountId,
-                Balance = 25,
             };
-
+            fromUserAccount.DepositFunds(50);
             var toAccountId = Guid.NewGuid();
             var toUserAccount = new Account
             {
                 Id = toAccountId,
-                Balance = 1000,
-                PaidIn = 0
             };
             _mockAccountRepository.Setup(x => x.GetAccountById(fromAccountId)).Returns(fromUserAccount);
             _mockAccountRepository.Setup(x => x.GetAccountById(toAccountId)).Returns(toUserAccount);
@@ -79,9 +70,6 @@ namespace MoneyBox.Tests.FeaturesTests
             Assert.Throws<InvalidOperationException>(() => transferMoney.Execute(fromAccountId, toAccountId, transferAmount));
 
             //ASSERT
-            fromUserAccount.Balance.ShouldBe(25);
-            toUserAccount.Balance.ShouldBe(1000);
-            _mockAccountRepository.Verify(x => x.GetAccountById(It.IsAny<Guid>()), Times.Exactly(2));
             _mockAccountRepository.Verify(x => x.Update(It.IsAny<Account>()), Times.Never);
         }
 
@@ -94,25 +82,20 @@ namespace MoneyBox.Tests.FeaturesTests
             var fromUserAccount = new Account
             {
                 Id = fromAccountId,
-                Balance = 1000,
             };
-
+            fromUserAccount.DepositFunds(1000);
             var toAccountId = Guid.NewGuid();
             var toUserAccount = new Account
             {
                 Id = toAccountId,
-                Balance = 1000,
-                PaidIn = 3960
             };
+            toUserAccount.DepositFunds(3960);
             _mockAccountRepository.Setup(x => x.GetAccountById(fromAccountId)).Returns(fromUserAccount);
             _mockAccountRepository.Setup(x => x.GetAccountById(toAccountId)).Returns(toUserAccount);
             //ACT
             Assert.Throws<InvalidOperationException>(() => transferMoney.Execute(fromAccountId, toAccountId, transferAmount));
 
             //ASSERT
-            fromUserAccount.Balance.ShouldBe(1000);
-            toUserAccount.Balance.ShouldBe(1000);
-            _mockAccountRepository.Verify(x => x.GetAccountById(It.IsAny<Guid>()), Times.Exactly(2));
             _mockAccountRepository.Verify(x => x.Update(It.IsAny<Account>()), Times.Never);
         }
 
@@ -125,20 +108,19 @@ namespace MoneyBox.Tests.FeaturesTests
             var fromUserAccount = new Account
             {
                 Id = fromAccountId,
-                Balance = 400,
                 User = new User
                 {
                     Email = "test@email.com"
                 }
             };
+            fromUserAccount.DepositFunds(400);
 
             var toAccountId = Guid.NewGuid();
             var toUserAccount = new Account
             {
-                Id = toAccountId,
-                Balance = 1000,
-                PaidIn = 0
+                Id = toAccountId
             };
+            toUserAccount.DepositFunds(1000);
             _mockAccountRepository.Setup(x => x.GetAccountById(fromAccountId)).Returns(fromUserAccount);
             _mockAccountRepository.Setup(x => x.GetAccountById(toAccountId)).Returns(toUserAccount);
             //ACT
@@ -151,7 +133,7 @@ namespace MoneyBox.Tests.FeaturesTests
         [Test]
         [TestCase(3550, 50)]
         [TestCase(3475, 50)]
-        public void ShouldSendNotificationIfPayInWarningReached(decimal startinPaidInAmount, decimal transferAmount)
+        public void ShouldSendNotificationIfPayInWarningReached(decimal startingPaidInAmount, decimal transferAmount)
         {
             //ARRANGE
             
@@ -159,20 +141,18 @@ namespace MoneyBox.Tests.FeaturesTests
             var fromUserAccount = new Account
             {
                 Id = fromAccountId,
-                Balance = 1000,
             };
-
+            fromUserAccount.DepositFunds(1000);
             var toAccountId = Guid.NewGuid();
             var toUserAccount = new Account
             {
                 Id = toAccountId,
-                Balance = 1000,
-                PaidIn = startinPaidInAmount,
                 User = new User
                 {
                     Email = "test@email.com"
                 }
             };
+            toUserAccount.DepositFunds(startingPaidInAmount);
             _mockAccountRepository.Setup(x => x.GetAccountById(fromAccountId)).Returns(fromUserAccount);
             _mockAccountRepository.Setup(x => x.GetAccountById(toAccountId)).Returns(toUserAccount);
             //ACT
