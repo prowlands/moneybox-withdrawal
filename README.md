@@ -25,7 +25,7 @@ Once you have completed your work, send us a link to your public repository.
 
 Good luck!
 
-## Notes on CHanges
+## Notes on Changes
 I have amended the account value properties to make them private and then added pulic methods for getting/setting their properties. 
 The Deposit and withdraw methods update multiple properties (e.g. deposit updates Balance and PaidIn) hwoever if the properties were still publicly accessable then these fields could be updated independently which would resulyt in fields being out of sync.
 
