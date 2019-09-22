@@ -27,6 +27,6 @@ Good luck!
 
 ## Notes on Changes
 I have amended the account value properties to make them private and then added pulic methods for getting/setting their properties. 
-The Deposit and withdraw methods update multiple properties (e.g. deposit updates Balance and PaidIn) hwoever if the properties were still publicly accessable then these fields could be updated independently which would resulyt in fields being out of sync.
+The Deposit and Withdraw methods update multiple properties (e.g. deposit updates Balance and PaidIn) however if the properties were still publicly accessible then these fields could be updated independently which would result in fields being out of sync.
 
-Based on the structure of the TransferMoney.Execute method I have assumed that an account will always be returned from the GetAccountById call on the repo. As a result I also haven't written any tests for this scenario 
+Based on the structure of the TransferMoney.Execute method I have assumed that an account will always be returned from the GetAccountById call on the repo. As a result I also haven't written any tests for the scenario where an account isn't returned 
